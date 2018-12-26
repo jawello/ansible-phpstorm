@@ -15,7 +15,7 @@
 - name: download
   get_url:
     url: "http://download-cf.jetbrains.com/webide/PhpStorm-{{ phpstorm_version }}.tar.gz"
-    dest: "{{ phpstorm_downloads_path }}/PhpStorm-{{ phpstorm_version }}.tar.gz"
+    dest: "{{ phpstorm_downloads_path }}/phpstorm-{{ phpstorm_version }}.tar.gz"
     owner: root
     group: root
     mode: 0644
@@ -24,12 +24,32 @@
     - phpstorm
     - phpstorm-downloads
 
+- name: create folder
+  file:
+    path: "{{ phpstorm_install_prefix }}/phpstorm-{{ phpstorm_version }}"
+    state: directory
+  tags:
+    - configuration
+    - phpstorm
+    - phpstorm-install  
+
 - name: install
   unarchive:
-    src: "{{ phpstorm_downloads_path }}/PhpStorm-{{ phpstorm_version }}.tar.gz"
-    dest: "{{ phpstorm_install_prefix }}"
-    creates: "{{ phpstorm_install_prefix }}/phpstorm-{{ phpstorm_version }}"
+    src: "{{ phpstorm_downloads_path }}/phpstorm-{{ phpstorm_version }}.tar.gz"
+    dest: "{{ phpstorm_install_prefix }}/phpstorm-{{ phpstorm_version }}"
+#    creates: "{{ phpstorm_install_prefix }}/phpstorm-{{ phpstorm_version }}"
     copy: false
+    extra_opts: [--strip-components=1]
+  tags:
+    - configuration
+    - phpstorm
+    - phpstorm-install
+
+- name: Create symbolic link
+  file:
+    src: "{{ phpstorm_install_prefix }}/phpstorm-{{ phpstorm_version }}/bin/phpstorm.sh"
+    dest: "/usr/local/bin/phpstorm"
+    state: link
   tags:
     - configuration
     - phpstorm
