@@ -54,3 +54,14 @@
     - configuration
     - phpstorm
     - phpstorm-install
+
+- name: Insert fake host to activate php storm
+  become: true
+  lineinfile:
+    path: /etc/hosts
+    line: 0.0.0.0 account.jetbrains.com
+  tags: phpstorm
+
+- debug:
+    msg: "Add this to phpstrom {{lookup('file', 'phpstorm_activation') }}"
+  tags: phpstorm
